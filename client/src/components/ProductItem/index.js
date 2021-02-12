@@ -1,9 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { pluralize } from "../../utils/helpers"
-import { useStoreContext } from '../../utils/GlobalState';
+// import { useStoreContext } from '../../utils/GlobalState';
 import { ADD_TO_CART, UPDATE_CART_QUANTITY } from '../../utils/actions';
 import { idbPromise } from "../../utils/helpers";
+import store from "../../utils/store";
 
 function ProductItem(item) {
   const {
@@ -13,7 +14,9 @@ function ProductItem(item) {
     price,
     quantity
   } = item;
-  const [state, dispatch] = useStoreContext();
+  // const [state, dispatch] = useStoreContext();
+  const state = store.getState();
+
   const { cart } = state;
 
   const addToCart= () => {
@@ -22,7 +25,7 @@ function ProductItem(item) {
 
     //if there was a match, call UPDATE with a new purchase quantity
     if (itemInCart) {
-      dispatch({
+      store.dispatch({
         type: UPDATE_CART_QUANTITY,
         _id: _id,
         purchaseQuantity: parseInt(itemInCart.purchaseQuantity) + 1
@@ -32,7 +35,7 @@ function ProductItem(item) {
         purchaseQuantity: parseInt(itemInCart.purchaseQuantity) + 1
       });
     } else {
-      dispatch({
+      store.dispatch({
         type: ADD_TO_CART,
         product: { ...item, purchaseQuantity: 1 }
       });
